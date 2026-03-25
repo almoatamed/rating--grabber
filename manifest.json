@@ -3,7 +3,7 @@
   "name": "Aniwatch",
   "version": "1.0.0",
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "popup/index.html"
   }, 
   "content_scripts": [
     {
