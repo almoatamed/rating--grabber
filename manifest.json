@@ -1,10 +1,11 @@
 {
-  "manifest_version": 3,
-  "name": "Aniwatch",
+  "manifest_version": 1,
+  "name": "Rating Grabber",
   "version": "1.0.0",
   "action": {
     "default_popup": "popup/index.html"
   }, 
+  "permissions": ["tabs"],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
