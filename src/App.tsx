@@ -224,36 +224,22 @@ const Main = () => {
   const [notAniwatch, setNotAniwatch] = useState(true);
 
   useEffect(() => {
-    if (location.hostname != "aniwatchtv.to") {
-      console.log("not aniwatch", location.hostname);
-      return;
-    }
-
     const getState = async (props: {
       setLoading: (v: boolean) => void;
       setError: (errMsg: string) => void;
       setNotMatchingWebsite: (v: boolean) => void;
       setRatings: (ratings: Rating[]) => void;
     }) => {
-      const [tab] = await chrome.tabs.query({
-        active: true,
-        currentWindow: true,
+      const response: StateResponse = await chrome.runtime.sendMessage({
+        type: "GET_CURRENT_STATE",
       });
 
-      if (!tab?.id) {
+      if (chrome.runtime.lastError) {
+        const errMsg = `Error: ${chrome.runtime.lastError.message}`;
         return;
       }
 
-      chrome.runtime.sendMessage(
-        { type: "GET_CURRENT_STATE" },
-        (response: StateResponse) => {
-          if (chrome.runtime.lastError) {
-            const errMsg = `Error: ${chrome.runtime.lastError.message}`;
-            return;
-          }
-          // response accessible
-        },
-      );
+      // response accessible
     };
 
     setNotAniwatch(false);
