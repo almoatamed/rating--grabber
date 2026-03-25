@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+
+    "types": ["chrome"],
     // Environment setup & latest features
     "lib": ["ESNext", "DOM"],
     "target": "ESNext",

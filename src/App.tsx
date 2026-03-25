@@ -198,24 +198,24 @@ const Card = (
   );
 };
 
-const loadRatings = async (setLoading: (value: boolean) => void) => {
-  setLoading(true);
-  try {
-    const ratings = document.querySelectorAll(
-      ".flw-item.flw-item-big:has(.film-poster):has(.film-details)",
-    );
-
-    ratings.forEach((item) => {
-      if (item.classList.contains(".film-details")) {
-        console.log("anime item details", item);
-      }
-    });
-  } catch (error) {
-    console.error(error);
-  } finally {
-    setLoading(false);
-  }
+type Rating = {
+  title: string;
+  rating: number;
+  source?: string;
 };
+type StateResponse =
+  | {
+      type: "not-matching-website";
+    }
+  | {
+      type: "loading titles";
+      site: string;
+    }
+  | {
+      type: "titles-ratings";
+      ratings: Rating[];
+      site: string;
+    };
 
 const Main = () => {
   const theme = useTheme();
@@ -228,10 +228,35 @@ const Main = () => {
       console.log("not aniwatch", location.hostname);
       return;
     }
+
+    const getState = async (props: {
+      setLoading: (v: boolean) => void;
+      setError: (errMsg: string) => void;
+      setNotMatchingWebsite: (v: boolean) => void;
+      setRatings: (ratings: Rating[]) => void;
+    }) => {
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+
+      if (!tab?.id) {
+        return;
+      }
+
+      chrome.runtime.sendMessage(
+        { type: "GET_CURRENT_STATE" },
+        (response: StateResponse) => {
+          if (chrome.runtime.lastError) {
+            const errMsg = `Error: ${chrome.runtime.lastError.message}`;
+            return;
+          }
+          // response accessible
+        },
+      );
+    };
+
     setNotAniwatch(false);
-    loadRatings((v) => {
-      setLoadingRatings(v);
-    });
   }, []);
 
   return (
